@@ -1,36 +1,37 @@
-// ❌ Before — 동일 로직이 두 곳에 중복
-class Rectangle {
-    double width, height;
+class Shape {
+protected:
+  virtual double area() const = 0;
+
 public:
-    double getArea()  { return width * height; }
-    double getScale() { return width * height * 2; }
-    // width * height 가 중복!
+  virtual ~Shape() = default;
+
+  void printArea() const { std::cout << "Area: " << area() << std::endl; }
+
+  double getArea() const { return area(); }
+
+  double getScale() const { return area() * 2; }
 };
 
-class Triangle {
-    double base, height;
+class Rectangle : public Shape {
+private:
+  double width;
+  double height;
+
+protected:
+  double area() const override { return width * height; }
+
 public:
-    double area()  { return 0.5 * base * height; }
-    double info()  { return 0.5 * base * height; } // 중복!
+  Rectangle(double width, double height) : width(width), height(height) {}
 };
 
-// ✅ After — 함수 추출하기 (Extract Function)
-// class Rectangle {
-//     double width, height;
-//     double computeArea() const { return width * height; } // 추출
-// public:
-//     double getArea()  { return computeArea(); }
-//     double getScale() { return computeArea() * 2; }
-// };
+class Triangle : public Shape {
+private:
+  double base;
+  double height;
 
-// ✅ 클래스 계층에서 중복 — 함수 올리기 (Pull Up Method)
-// class Shape {
-// protected:
-//     virtual double area() const = 0;
-// public:
-//     void printArea() const {  // 공통 → 부모로 올리기
-//         std::cout << "Area: " << area() << std::endl;
-//     }
-// };
-// class Rect  : public Shape { double area() const override { return w*h; } };
-// class Tri   : public Shape { double area() const override { return 0.5*b*h; } };
+protected:
+  double area() const override { return 0.5 * base * height; }
+
+public:
+  Triangle(double base, double height) : base(base), height(height) {}
+};
